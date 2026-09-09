@@ -14,25 +14,22 @@ module.exports = {
   onStart: async function ({ api, event, usersData }) {
     const { threadID, messageID, senderID } = event;
     const currentPrefix = global.GoatBot?.config?.prefix || ".";
-    const botName = global.GoatBot?.config?.nickNameBot || global.GoatBot?.config?.name || "GoatBot";
     
     let userName = "Utilisateur";
     try {
       userName = await usersData.getName(senderID) || "Utilisateur";
     } catch (e) {}
     
-    const rawText = 
-      `👋 Hey ${userName}, did you ask for my prefix?\n` +
-      `╭‣ 🌐 Global: ${currentPrefix}\n` +
-      `╰‣ 💬 This Chat: ${currentPrefix}\n` +
-      `🤖 I'm ${botName}\n` +
-      `📂 try "${currentPrefix}help" to see all commands.`;
-    
-    const formattedText = fonts.christus(rawText);
+    const message = 
+      `𝗦alut 🍃${userName} tu veux savoir ma vision ?\n` +
+      `╭‣ 🌐 𝗚𝗅𝗈𝖻𝖺𝗅: ${currentPrefix}\n` +
+      `╰‣ 💬 𝗖e 𝗖𝗁𝖺𝗍: ${currentPrefix}\n` +
+      `🍃𝗝e suis ᏔᎯᏁᎠᎬᏒᎬᏒ\n` +
+      `📂 𝗘ssayer "${currentPrefix}𝗁𝖾𝗅𝗉" pour voir toutes les commandes.`;
     
     return api.sendMessage(
       {
-        body: formattedText,
+        body: message,
         mentions: [{
           tag: userName,
           id: senderID
@@ -42,4 +39,5 @@ module.exports = {
       messageID
     );
   }
-};
+}
+  ;
