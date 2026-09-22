@@ -4,7 +4,7 @@ const fonts = require("../func/fonts.js");
 
 module.exports = {
   config: {
-    name: "wl",
+    name: "Ownerlock",
     version: "2.1",
     author: "Shade",
     countDown: 5,
