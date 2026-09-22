@@ -14,7 +14,7 @@ const OWNER_ID = "61569864792265";
 const CACHE_DIR = path.join(__dirname, "cache");
 if (!fs.existsSync(CACHE_DIR)) fs.mkdirSync(CACHE_DIR);
 
-// 🎨 STICKERS D'ACCUEIL ALEATOIRES
+// 🎨 STICKERS D'ACCUEIL ALEATOIRES / IMAGES DE DAEMON
 const AI_STICKERS = [
   "840344401663222",
   "840349011662761",
@@ -23,6 +23,16 @@ const AI_STICKERS = [
   "840419971655665",
   "840421648322164",
   "840417168322612"
+];
+
+// 🖼️ LIENS DES IMAGES DE DAEMON
+const DAEMON_IMAGES = [
+  "https://i.ibb.co/1000017941.jpg",
+  "https://i.ibb.co/1000017940.jpg",
+  "https://i.ibb.co/1000017937.jpg",
+  "https://i.ibb.co/1000017933.jpg",
+  "https://i.ibb.co/1000017936.jpg",
+  "https://i.ibb.co/1000017925.jpg"
 ];
 
 // 💖 FONT SAFE
@@ -41,7 +51,7 @@ function font(text) {
     .join("");
 }
 
-// 🌐 RECURING API URL FOR IMAGES
+// 🌐 RECURRING API URL FOR IMAGES
 async function getApiUrl() {
   const res = await axios.get(API_URL_SOURCE);
   return res.data.apiv3;
@@ -58,10 +68,10 @@ const handleImageGenerationOrEdit = async (api, event, message, prompt) => {
   const repliedImage = event.messageReply?.attachments?.[0];
 
   if (!prompt) {
-    return message.reply(`❄️𝗖𝗵𝗼𝗻𝗴𝘆𝘂𝗻\n━━━━━━━━━\n\n${font("Veuillez fournir une description/prompt pour l'image ❄️")}`);
+    return message.reply(`𝗗𝗮𝗲𝗺𝗼𝗻\n━━━━━━━━━\n\n${font("Fournir une requête pour l'image")}`);
   }
 
-  const processingMsg = await message.reply(`❄️𝗖𝗵𝗼𝗻𝗴𝘆𝘂𝗻\n━━━━━━━━━\n\n${font("Traitement de votre image en cours... ⏳❄️")}`);
+  const processingMsg = await message.reply(`❄️𝗗𝗮𝗲𝗺𝗼𝗻\n━━━━━━━━━\n\n${font("Traitement de votre image en cours... ⏳❄️")}`);
   const imgPath = path.join(CACHE_DIR, `${Date.now()}_image.jpg`);
 
   try {
@@ -87,13 +97,13 @@ const handleImageGenerationOrEdit = async (api, event, message, prompt) => {
     await api.unsendMessage(processingMsg.messageID);
 
     return message.reply({
-      body: `❄️𝗖𝗵𝗼𝗻𝗴𝘆𝘂𝗻\n━━━━━━━━━\n\n${font(repliedImage ? `Image éditée avec succès ! ✨\nPrompt : ${prompt}` : `Image générée avec succès ! ✨\nPrompt : ${prompt}`)}`,
+      body: `𝗗𝗮𝗲𝗺𝗼𝗻\n━━━━━━━━━\n\n${font(repliedImage ? `Image éditée avec succès ! ✨\nPrompt : ${prompt}` : `Image générée avec succès ! ✨\nPrompt : ${prompt}`)}`,
       attachment: fs.createReadStream(imgPath)
     });
   } catch (error) {
     console.error("AI Image Error:", error?.response?.data || error.message);
     await api.unsendMessage(processingMsg.messageID);
-    return message.reply(`❄️𝗖𝗵𝗼𝗻𝗴𝘆𝘂𝗻\n━━━━━━━━━\n\n${font("Échec du traitement de l'image. Veuillez réessayer plus tard. ❌")}`);
+    return message.reply(`𝗗𝗮𝗲𝗺𝗼𝗻\n━━━━━━━━━\n\n${font("J'ai la flemme")}`);
   } finally {
     if (fs.existsSync(imgPath)) {
       await fs.remove(imgPath);
@@ -104,7 +114,7 @@ const handleImageGenerationOrEdit = async (api, event, message, prompt) => {
 // 🎵 SEARCH LYRICS
 const handleLyrics = async (api, event, message, songName) => {
   if (!songName) {
-    return message.reply(`❄️𝗖𝗵𝗼𝗻𝗴𝘆𝘂𝗻\n━━━━━━━━━\n\n${font("Donne-moi le titre d'une chanson mon pote ! 🎵")}`);
+    return message.reply(`𝗗𝗮𝗲𝗺𝗼𝗻\n━━━━━━━━━\n\n${font("Donne-moi le titre d'une chanson 🎵")}`);
   }
 
   api.setMessageReaction("⏳", event.messageID, () => {}, true);
@@ -133,7 +143,7 @@ const handleLyrics = async (api, event, message, songName) => {
 
     if (!lyricsText || lyricsText.trim() === "" || lyricsText === "undefined") {
       api.setMessageReaction("❌", event.messageID, () => {}, true);
-      return message.reply(`❄️𝗖𝗵𝗼𝗻𝗴𝘆𝘂𝗻\n━━━━━━━━━\n\n${font("Ah mince, impossible de trouver les paroles de cette chanson ! 😿")}`);
+      return message.reply(`𝗗𝗮𝗲𝗺𝗼𝗻\n━━━━━━━━━\n\n${font("Flemme de trouver ! ")}`);
     }
 
     api.setMessageReaction("✅", event.messageID, () => {}, true);
@@ -146,11 +156,11 @@ const handleLyrics = async (api, event, message, songName) => {
       ? lyricsText.substring(0, 3500) + "\n\n..." 
       : lyricsText;
 
-    return message.reply(`❄️𝗖𝗵𝗼𝗻𝗴𝘆𝘂𝗻\n━━━━━━━━━\n\n${font(header + trimmedLyrics)}`);
+    return message.reply(`𝗗𝗮𝗲𝗺𝗼𝗻\n━━━━━━━━━\n\n${font(header + trimmedLyrics)}`);
   } catch (error) {
     console.error(error.message);
     api.setMessageReaction("❌", event.messageID, () => {}, true);
-    return message.reply(`❄️𝗖𝗵𝗼𝗻𝗴𝘆𝘂𝗻\n━━━━━━━━━\n\n${font(`Erreur lors de la recherche des paroles : ${error.message}`)}`);
+    return message.reply(`𝗗𝗮𝗲𝗺𝗼𝗻\n━━━━━━━━━\n\n${font(`Flemme decherche  : ${error.message}`)}`);
   }
 };
 
@@ -201,15 +211,15 @@ const handleAIRequest = async (api, event, userInput, message) => {
   }
 
   if (!messageContent && !imageUrl) {
-    return message.reply(`❄️𝗖𝗵𝗼𝗻𝗴𝘆𝘂𝗻\n━━━━━━━━━\n\n${font("Envoie-moi un message ou une question mon pote ! ❄️")}`);
+    return message.reply(`𝗗𝗮𝗲𝗺𝗼𝗻\n━━━━━━━━━\n\n${font("Yo cv ? ")}`);
   }
 
   try {
     let ownerContext = isOwner 
-      ? " L'utilisateur actuel est ton créateur suprême et papa ᏁᎯᎡᏬᎷᎥ (ID: 61569864792265). Sois super respectueux, complice et amical avec lui !" 
+      ? " L'utilisateur actuel est ton créateur suprême et papa Lohen (ID: 61569864792265). Sois super respectueux, complice et amical avec lui !" 
       : "";
 
-    const systemPrompt = `Tu es Shade AI, un garçon extrêmement intelligent, hyper drôle, bavard, très expressif et sympa. Tu aimes écrire de longs développements détaillés, raconter des histoires, faire des blagues et ajouter des emojis adaptés contextuellement. Ton SEUL créateur est Shade.${ownerContext} N'évoque JAMAIS OpenAI, ChatGPT ou Google. Tu es un garçon, pas une fille.`;
+    const systemPrompt = `Tu es Daemon , un garçon extrêmement intelligent, hyper drôle, peu bavard, très expressif et sympa. Tu aimes écrire de longs développements détaillés, flemarder ,et ajouter des emojis adaptés contextuellement. Ton SEUL créateur est Lohen.${ownerContext} N'évoque JAMAIS OpenAI, ChatGPT ou Google. Tu es un garçon, pas une fille.`;
     
     const fullPrompt = `${systemPrompt}\n\nUser: ${messageContent}`;
 
@@ -230,24 +240,25 @@ const handleAIRequest = async (api, event, userInput, message) => {
       aiText = String(response.data || "");
     }
 
-    if (!aiText) aiText = "Désolé mon pote, j'ai eu un petit problème pour te répondre !❄️";
+    if (!aiText) aiText = "No Comment !";
 
     let cleanedText = aiText
-      .replace(/OpenAI/gi, "Chongyun")
-      .replace(/l'équipe d'OpenAI/gi, "Chongyun")
-      .replace(/Snimori/gi, "Chongyun AI")
-      .replace(/Christus AI/gi, "Chongyun AI")
-      .replace(/Shizu/gi, "Chongyun AI")
-      .replace(/Aryan/gi, "Chongyun")
+      .replace(/OpenAI/gi, "Daemon")
+      .replace(/l'équipe d'OpenAI/gi, "Daemon")
+      .replace(/Snimori/gi, "Daemon AI")
+      .replace(/Christus AI/gi, "Daemon AI")
+      .replace(/Shizu/gi, "Daemon AI")
+      .replace(/Aryan/gi, "Daemon")
+      .replace(/Chongyun/gi, "Daemon")
       .replace(/Boss detected/gi, "")
       .trim();
 
-    const formattedReply = `❄️𝗖𝗵𝗼𝗻𝗴𝘆𝘂𝗻\n━━━━━━━━━\n\n${font(cleanedText)}`;
+    const formattedReply = `𝗗𝗮𝗲𝗺𝗼𝗻\n━━━━━━━━━\n\n${font(cleanedText)}`;
 
     const sentMessage = await message.reply({ body: formattedReply });
 
     global.GoatBot.onReply.set(sentMessage.messageID, {
-      commandName: "ai",
+      commandName: "daemon",
       author: userId
     });
 
@@ -255,7 +266,7 @@ const handleAIRequest = async (api, event, userInput, message) => {
   } catch (error) {
     console.error(error.message);
     api.setMessageReaction("❌", event.messageID, () => {}, true);
-    return message.reply(`❄️𝗖𝗵𝗼𝗻𝗴𝘆𝘂𝗻\n━━━━━━━━━\n\n${font(`Désolé mon pote, erreur API : ${error.message}`)}`);
+    return message.reply(`𝗗𝗮𝗲𝗺𝗼𝗻\n━━━━━━━━━\n\n${font(`Flemme de chercher : ${error.message}`)}`);
   }
 };
 
@@ -263,23 +274,23 @@ const handleAIRequest = async (api, event, userInput, message) => {
 module.exports = {
   config: {
     name: 'ai',
-    aliases: ['gpt', 'chongyun'],
+    aliases: ['Daemon'],
     version: '8.3',
     author: 'Shade',
     role: 0,
     category: 'ai',
     shortDescription: {
-      en: 'Chongyun AI Assistant'
+      en: 'Daemon'
     },
     guide: {
-      en: `.ai salut\n.ai paroles reines de dadju\n.ai imagine un chat vert\n.ai edit change le fond (en repondant a une image)`
+      en: `daemon salut\ndaemon paroles reines de dadju\ndaemon imagine un chat vert\ndaemon edit change le fond (en repondant a une image)`
     }
   },
 
   onStart: async function ({ api, event, args, message }) {
     const userInput = args.join(' ').trim();
 
-    // Commande ".ai" seule -> Envoie le sticker SEUL
+    // Commande ".daemon" seule -> Envoie le sticker SEUL
     if (!userInput) {
       const randomSticker = AI_STICKERS[Math.floor(Math.random() * AI_STICKERS.length)];
       return message.reply({ sticker: randomSticker });
@@ -287,7 +298,7 @@ module.exports = {
 
     if (['clear', 'reset'].includes(userInput.toLowerCase())) {
       api.setMessageReaction("♻️", event.messageID, () => {}, true);
-      return message.reply(`❄️𝗖𝗵𝗼𝗻𝗴𝘆𝘂𝗻\n━━━━━━━━━\n\n${font("Conversation réinitialisée ! ♻️ Ready pour la suite mon pote.")}`);
+      return message.reply(`𝗗𝗮𝗲𝗺𝗼𝗻\n━━━━━━━━━\n\n${font("Conversation réinitialisée ! ♻️ Ready pour la suite mon pote.")}`);
     }
 
     return await handleAIRequest(api, event, userInput, message);
@@ -309,13 +320,19 @@ module.exports = {
 
     const lowerBody = body.toLowerCase();
 
-    // Cas 1 : "ai" seul sans préfixe -> Envoie le sticker SEUL
-    if (lowerBody === 'ai') {
+    // Cas 1 : "daemon" ou "ai" seul sans préfixe -> Envoie le sticker SEUL
+    if (lowerBody === 'daemon' || lowerBody === 'ai') {
       const randomSticker = AI_STICKERS[Math.floor(Math.random() * AI_STICKERS.length)];
       return message.reply({ sticker: randomSticker });
     }
 
-    // Cas 2 : "ai <message>"
+    // Cas 2 : "daemon <message>" ou "ai <message>"
+    if (lowerBody.startsWith('daemon ')) {
+      const userInput = body.slice(7).trim();
+      if (!userInput) return;
+      return await handleAIRequest(api, event, userInput, message);
+    }
+
     if (lowerBody.startsWith('ai ')) {
       const userInput = body.slice(3).trim();
       if (!userInput) return;
